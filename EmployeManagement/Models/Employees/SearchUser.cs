@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace UserManagement.Models.Users
+namespace EmployeManagement.Models.Employees
 {
-    public class SearchUsersResponse : SearchBase
+    public class SearchEmployeResponse : SearchBase
     {
-        public string UserUID { get; set; }
+        public string EmployeUID { get; set; }
     }
     public class SearchRequest : SearchBase
     {

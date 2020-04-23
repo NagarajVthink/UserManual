@@ -1,40 +1,40 @@
-﻿using Newtonsoft.Json;
+﻿using EmployeManagement.Models;
+using EmployeManagement.Models.Employees;
+using Newtonsoft.Json;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using UserManagement.Models;
-using UserManagement.Models.Users;
 
-namespace UserManagement.Services
+namespace EmployeManagemant.Services
 {
     /// <summary>
-    /// This class will handle user CURD operations.
+    /// This class will handle Employe CURD operations.
     /// </summary>
-    public class User
+    public class Employe
     {
         public static AppConfig _appConfig;
-        public User(AppConfig appSetting)
+        public Employe(AppConfig appSetting)
         {
             _appConfig = appSetting;
         }
 
         /// <summary>
-        /// Insert UserDetails, If the User email already exists throw error message to the user.
+        /// Insert EmployeDetails, If the Employe email already exists throw error message to the Employe.
         /// </summary>
-        /// <param name="request">User information</param>
-        public ResponseModel InsertUserDetails(CreateUser request)
+        /// <param name="request">Employe information</param>
+        public ResponseModel InsertEmployeDetails(CreateEmploye request)
         {
             try
             {
                 using (var con = new SqlConnection(_appConfig.ConnectionStrings.ClientPortal))
                 {
-                    using (var cmd = new SqlCommand(_appConfig.StoredProcedures.InsertUserDetails, con))
+                    using (var cmd = new SqlCommand(_appConfig.StoredProcedures.InsertEmployeDetails, con))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@UserUID", SqlDbType.UniqueIdentifier).Value = Guid.NewGuid();
+                        cmd.Parameters.Add("@EmployeUID", SqlDbType.UniqueIdentifier).Value = Guid.NewGuid();
                         cmd.Parameters.Add("@Email", SqlDbType.VarChar).Value = request.Email;
                         cmd.Parameters.Add("@Phone", SqlDbType.VarChar).Value = request.Phone;
                         cmd.Parameters.Add("@FirstName", SqlDbType.VarChar).Value = request.FirstName;
@@ -50,33 +50,33 @@ namespace UserManagement.Services
                         var reader = cmd.ExecuteReader();
                         var response = reader.Read();
                         if (reader["Message"].ToString().ToUpper() == "SUCCESS")
-                            return ReturnResponse.CreateResponse(null, "User Details Inserted, User ID:" + reader["UserID"].ToString().ToUpper(), true);
+                            return ReturnResponse.CreateResponse(null, "Employe Details Inserted, Employe ID:" + reader["EmployeID"].ToString().ToUpper(), true);
                         else
-                            return ReturnResponse.CreateResponse(null, "User Email Already Exist.", false);
+                            return ReturnResponse.CreateResponse(null, "Employe Email Already Exist.", false);
                     }
                 }
             }
             catch (Exception e)
             {
-                Log.Error("Unable to Insert User Details. Error: " + e.Message + " Request: " + JsonConvert.SerializeObject(request));
-                throw new UserException("Error in InsertUserDetails, " + e.Message, e.InnerException);
+                Log.Error("Unable to Insert Employe Details. Error: " + e.Message + " Request: " + JsonConvert.SerializeObject(request));
+                throw new EmployeException("Error in InsertEmployeDetails, " + e.Message, e.InnerException);
             }
         }
 
         /// <summary>
-        /// Update existing user details bu user UID.
+        /// Update existing Employe details bu Employe UID.
         /// </summary>
-        /// <param name="request">request object to update user information based on UserUID</param>
-        public ResponseModel UpdateUserDetailByUserUID(UpdateUser request)
+        /// <param name="request">request object to update Employe information based on EmployeUID</param>
+        public ResponseModel UpdateEmployeDetailByEmployeUID(UpdateEmploye request)
         {
             try
             {
                 using (var con = new SqlConnection(_appConfig.ConnectionStrings.ClientPortal))
                 {
-                    using (var cmd = new SqlCommand(_appConfig.StoredProcedures.UpdateUserDetails, con))
+                    using (var cmd = new SqlCommand(_appConfig.StoredProcedures.UpdateEmployeDetails, con))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@UserUID", SqlDbType.UniqueIdentifier).Value = Guid.Parse(request.UserUID);
+                        cmd.Parameters.Add("@EmployeUID", SqlDbType.UniqueIdentifier).Value = Guid.Parse(request.EmployeUID);
                         cmd.Parameters.Add("@Email", SqlDbType.VarChar).Value = request.Email;
                         cmd.Parameters.Add("@Phone", SqlDbType.VarChar).Value = request.Phone;
                         cmd.Parameters.Add("@FirstName", SqlDbType.VarChar).Value = request.FirstName;
@@ -93,29 +93,29 @@ namespace UserManagement.Services
                         if (updatedRows > 0)
                             return ReturnResponse.CreateResponse(null, "Update Successfully.", true);
                         else
-                            return ReturnResponse.CreateResponse(null, "UserUID Not Exist.", false);
+                            return ReturnResponse.CreateResponse(null, "EmployeUID Not Exist.", false);
                     }
                 }
             }
             catch (Exception e)
             {
-                Log.Error("Unable to Update User Details. Error: " + e.Message + " Request: " + JsonConvert.SerializeObject(request));
-                throw new UserException("Error in UpdateUserDetailByUserUID, " + e.Message, e.InnerException);
+                Log.Error("Unable to Update Employe Details. Error: " + e.Message + " Request: " + JsonConvert.SerializeObject(request));
+                throw new EmployeException("Error in UpdateEmployeDetailByEmployeUID, " + e.Message, e.InnerException);
             }
         }
 
         /// <summary>
-        /// Search existing user details.
+        /// Search existing Employe details.
         /// </summary>
-        /// <param name="request">User Request, Result will return based on page index</param>
-        public ResponseModel SearchUserDetail(SearchRequest request)
+        /// <param name="request">Employe Request, Result will return based on page index</param>
+        public ResponseModel SearchEmployeDetail(SearchRequest request)
         {
             try
             {
-                var users = new List<SearchUsersResponse>();
+                var Employee = new List<SearchEmployeResponse>();
                 using (var con = new SqlConnection(_appConfig.ConnectionStrings.ClientPortal))
                 {
-                    using (var cmd = new SqlCommand(_appConfig.StoredProcedures.SearchUser, con))
+                    using (var cmd = new SqlCommand(_appConfig.StoredProcedures.SearchEmploye, con))
                     {
                         {
                             cmd.CommandType = CommandType.StoredProcedure;
@@ -136,9 +136,9 @@ namespace UserManagement.Services
                             var reader = cmd.ExecuteReader();
                             while (reader.Read())
                             {
-                                users.Add(new SearchUsersResponse
+                                Employee.Add(new SearchEmployeResponse
                                 {
-                                    UserUID = reader["UserUID"].ToString(),
+                                    EmployeUID = reader["EmployeUID"].ToString(),
                                     Email = reader["Email"].ToString(),
                                     Phone = reader["Phone"].ToString(),
                                     FirstName = reader["FirstName"].ToString(),
@@ -150,8 +150,8 @@ namespace UserManagement.Services
                                     IsActive = bool.Parse(reader["IsActive"].ToString()),
                                 });
                             }
-                            if (users.Count() > 0)
-                                return ReturnResponse.CreateResponse(users, "", true);
+                            if (Employee.Count() > 0)
+                                return ReturnResponse.CreateResponse(Employee, "", true);
                             else
                                 return ReturnResponse.CreateResponse(null, "No Data Found", false);
                         }
@@ -161,31 +161,31 @@ namespace UserManagement.Services
             catch (Exception e)
             {
                 Log.Error("Error: " + e.Message + " Request: " + JsonConvert.SerializeObject(request));
-                throw new UserException("Error in UpdaetUserDetailByUserUID, " + e.Message, e.InnerException);
+                throw new EmployeException("Error in Update Employe Detail By EmployeUID, " + e.Message, e.InnerException);
             }
         }
 
         /// <summary>
-        /// Search existing user details by UserUID.
+        /// Search existing Employe details by EmployeUID.
         /// </summary>
-        public ResponseModel SearchUserDetailByUserUID(string userUID)
+        public ResponseModel SearchEmployeDetailByEmployeUID(string EmployeUID)
         {
             try
             {
-                var users = new List<SearchUsersResponse>();
+                var Employee = new List<SearchEmployeResponse>();
                 using (var con = new SqlConnection(_appConfig.ConnectionStrings.ClientPortal))
-                using (var cmd = new SqlCommand(_appConfig.StoredProcedures.SearchUserByUserID, con))
+                using (var cmd = new SqlCommand(_appConfig.StoredProcedures.SearchEmployeByEmployeID, con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@UserUID", SqlDbType.VarChar).Value = userUID;
+                    cmd.Parameters.Add("@EmployeUID", SqlDbType.VarChar).Value = EmployeUID;
                     if (con.State != ConnectionState.Open)
                         con.Open();
                     var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
-                        users.Add(new SearchUsersResponse
+                        Employee.Add(new SearchEmployeResponse
                         {
-                            UserUID = reader["UserUID"].ToString(),
+                            EmployeUID = reader["EmployeUID"].ToString(),
                             Email = reader["Email"].ToString(),
                             Phone = reader["Phone"].ToString(),
                             FirstName = reader["FirstName"].ToString(),
@@ -197,8 +197,8 @@ namespace UserManagement.Services
                             IsActive = bool.Parse(reader["Active"].ToString()),
                         });
                     }
-                    if (users.Count() > 0)
-                        return ReturnResponse.CreateResponse(users, "", true);
+                    if (Employee.Count() > 0)
+                        return ReturnResponse.CreateResponse(Employee, "", true);
                     else
                         return ReturnResponse.CreateResponse(null, "No Data Found", false);
                 }
@@ -206,40 +206,40 @@ namespace UserManagement.Services
             catch (Exception e)
             {
                 Log.Error("Error: " + e.Message);
-                throw new UserException("Error in UpdaetUserDetailByUserUID, " + e.Message, e.InnerException);
+                throw new EmployeException("Error in UpdaetEmployeDetailByEmployeUID, " + e.Message, e.InnerException);
             }
         }
 
         /// <summary>
-        /// Update existing user details bu user UID.
+        /// Update existing Employe details bu Employe UID.
         /// </summary>
-        /// <param name="request">request object to update user information based on UserUID</param>
-        public ResponseModel InActiveUserByUID(DeleteUser request)
+        /// <param name="request">request object to update Employe information based on EmployeUID</param>
+        public ResponseModel InActiveEmployeByUID(DeleteEmploye request)
         {
             try
             {
                 using (var con = new SqlConnection(_appConfig.ConnectionStrings.ClientPortal))
                 {
-                    using (var cmd = new SqlCommand(_appConfig.StoredProcedures.DeleteUser, con))
+                    using (var cmd = new SqlCommand(_appConfig.StoredProcedures.DeleteEmploye, con))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
 
-                        cmd.Parameters.Add("@UserUID", SqlDbType.UniqueIdentifier).Value = Guid.Parse(request.UserUID);
+                        cmd.Parameters.Add("@EmployeUID", SqlDbType.UniqueIdentifier).Value = Guid.Parse(request.EmployeUID);
                         cmd.Parameters.Add("@UpdatedBy", SqlDbType.VarChar).Value = request.UpdatedBy;
                         if (con.State != ConnectionState.Open)
                             con.Open();
                         int updatedRows = cmd.ExecuteNonQuery();
                         if (updatedRows > 0)
-                            return ReturnResponse.CreateResponse(null, "User Deleted.", true);
+                            return ReturnResponse.CreateResponse(null, "Employe Deleted.", true);
                         else
-                            return ReturnResponse.CreateResponse(null, "UserUID Not Exist.", false);
+                            return ReturnResponse.CreateResponse(null, "EmployeUID Not Exist.", false);
                     }
                 }
             }
             catch (Exception e)
             {
-                Log.Error("Unable to DeleteUser. Error in InActiveUserByUID: " + e.Message + " Request: " + JsonConvert.SerializeObject(request));
-                throw new UserException("Error in InActiveUserByUID, " + e.Message, e.InnerException);
+                Log.Error("Unable to DeleteEmploye. Error in InActiveEmployeByUID: " + e.Message + " Request: " + JsonConvert.SerializeObject(request));
+                throw new EmployeException("Error in InActiveEmployeByUID, " + e.Message, e.InnerException);
             }
         }
     }

@@ -1,17 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EmployeManagement.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using UserManagement.Models;
 
-namespace UserManagement.Provider
+namespace EmployeManagement.Provider
 {
     public class CustomExceptionFilter : ExceptionFilterAttribute
     {
         public override void OnException(ExceptionContext context)
         {
-            if (context.Exception is UserException)
+            if (context.Exception is EmployeException)
             {
                 // handle explicit 'known' API errors
-                var ex = context.Exception as UserException;
+                var ex = context.Exception as EmployeException;
                 context.Exception = null;
                 var apiError = new ResponseModel
                 {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-namespace UserManagement
+namespace EmployeManagement
 {
     public class Program
     {

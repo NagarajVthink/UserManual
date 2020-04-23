@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Configuration;
-using System;
 using UserManagement.Models;
 using UserManagement.Models.Users;
 using UserManagement.Services;
