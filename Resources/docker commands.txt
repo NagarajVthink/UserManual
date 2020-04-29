@@ -1,0 +1,17 @@
+
+User management:
+
+build command:
+docker build -t usermgmt_image .
+
+run command:
+docker run -p 8100:80 --name usermgmt_con usermgmt_image
+
+
+Emp managment:
+
+build command:
+docker build -t emp_mgmt_image .
+
+run command:
+docker run -p 8200:80 --name emp_mgmt_con emp_mgmt_image

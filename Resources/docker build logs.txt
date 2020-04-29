@@ -1,0 +1,71 @@
+D:\Danda\CSharp\vthink\UserManual\UserManagement>docker build -t usermgmt_image .
+Sending build context to Docker daemon  7.473MB
+Step 1/16 : FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
+ ---> 49a8777ecaba
+Step 2/16 : WORKDIR /app
+ ---> Using cache
+ ---> 5092a52179a4
+Step 3/16 : FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+ ---> 1742a2119970
+Step 4/16 : WORKDIR /src
+ ---> Using cache
+ ---> bda0c24decc2
+Step 5/16 : RUN find -type d -name bin -prune -exec rm -rf {} \; && find -type d -name obj -prune -exec rm -rf {} \;
+ ---> Using cache
+ ---> b003be4be516
+Step 6/16 : COPY . /src/UserManagement
+ ---> 38b5365d26fa
+Step 7/16 : WORKDIR /src/UserManagement
+ ---> Running in 8b34b437508b
+Removing intermediate container 8b34b437508b
+ ---> a970d8c09137
+Step 8/16 : RUN dotnet restore UserManagement.csproj
+ ---> Running in dda56a408a1b
+  Restore completed in 2.52 min for /src/UserManagement/UserManagement.csproj.
+Removing intermediate container dda56a408a1b
+ ---> de87220ed23d
+Step 9/16 : RUN dotnet build UserManagement.csproj -c Release -o /app/build
+ ---> Running in 9577995014c4
+Microsoft (R) Build Engine version 16.5.0+d4cbfca49 for .NET Core
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+  Restore completed in 139.05 ms for /src/UserManagement/UserManagement.csproj.
+  UserManagement -> /app/build/UserManagement.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:13.53
+Removing intermediate container 9577995014c4
+ ---> a569298f160e
+Step 10/16 : FROM build AS publish
+ ---> a569298f160e
+Step 11/16 : RUN dotnet publish UserManagement.csproj -c Release -o /app/publish
+ ---> Running in bcaabcaa4d77
+Microsoft (R) Build Engine version 16.5.0+d4cbfca49 for .NET Core
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+  Restore completed in 144.2 ms for /src/UserManagement/UserManagement.csproj.
+  UserManagement -> /src/UserManagement/bin/Release/netcoreapp3.1/UserManagement.dll
+  UserManagement -> /app/publish/
+Removing intermediate container bcaabcaa4d77
+ ---> 58330a9a1201
+Step 12/16 : FROM base AS final
+ ---> 5092a52179a4
+Step 13/16 : WORKDIR /app
+ ---> Running in b8380e0e11c0
+Removing intermediate container b8380e0e11c0
+ ---> 1f6ef8b18e46
+Step 14/16 : COPY --from=publish /app/publish .
+ ---> fb9d1a5ebcd6
+Step 15/16 : EXPOSE 80
+ ---> Running in f63bab29de19
+Removing intermediate container f63bab29de19
+ ---> 2d50ef83b274
+Step 16/16 : ENTRYPOINT ["dotnet", "UserManagement.dll"]
+ ---> Running in 64945bd38f88
+Removing intermediate container 64945bd38f88
+ ---> cba5fbb6f6a3
+Successfully built cba5fbb6f6a3
+Successfully tagged usermgmt_image:latest

@@ -1,0 +1,70 @@
+D:\Danda\CSharp\vthink\UserManual\EmployeManagement>docker build -t emp_mgmt_image .
+Sending build context to Docker daemon  7.478MB
+Step 1/16 : FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
+ ---> 49a8777ecaba
+Step 2/16 : WORKDIR /app
+ ---> Using cache
+ ---> 5092a52179a4
+Step 3/16 : FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+ ---> 1742a2119970
+Step 4/16 : WORKDIR /src
+ ---> Using cache
+ ---> bda0c24decc2
+Step 5/16 : RUN find -type d -name bin -prune -exec rm -rf {} \; && find -type d -name obj -prune -exec rm -rf {} \;
+ ---> Using cache
+ ---> b003be4be516
+Step 6/16 : COPY . /src/EmployeManagement
+ ---> 5f064e27248a
+Step 7/16 : WORKDIR /src/EmployeManagement
+ ---> Running in 9c64ed3e563d
+Removing intermediate container 9c64ed3e563d
+ ---> 73daa37d6de2
+Step 8/16 : RUN dotnet restore EmployeManagement.csproj
+ ---> Running in 5a9fd8a134e9
+  Restore completed in 2.42 min for /src/EmployeManagement/EmployeManagement.csproj.
+Removing intermediate container 5a9fd8a134e9
+ ---> 0918b1dd072d
+Step 9/16 : RUN dotnet build EmployeManagement.csproj -c Release -o /app/build
+ ---> Running in f083809680ee
+Microsoft (R) Build Engine version 16.5.0+d4cbfca49 for .NET Core
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+  Restore completed in 145.74 ms for /src/EmployeManagement/EmployeManagement.csproj.
+  EmployeManagement -> /app/build/EmployeManagement.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:12.94
+Removing intermediate container f083809680ee
+ ---> a032e0e9658e
+Step 10/16 : FROM build AS publish
+ ---> a032e0e9658e
+Step 11/16 : RUN dotnet publish EmployeManagement.csproj -c Release -o /app/publish
+ ---> Running in 539bce5ba364
+Microsoft (R) Build Engine version 16.5.0+d4cbfca49 for .NET Core
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+  Restore completed in 135.74 ms for /src/EmployeManagement/EmployeManagement.csproj.
+  EmployeManagement -> /src/EmployeManagement/bin/Release/netcoreapp3.1/EmployeManagement.dll
+  EmployeManagement -> /app/publish/
+Removing intermediate container 539bce5ba364
+ ---> 5e0ab3fc432d
+Step 12/16 : FROM base AS final
+ ---> 5092a52179a4
+Step 13/16 : WORKDIR /app
+ ---> Using cache
+ ---> 1f6ef8b18e46
+Step 14/16 : COPY --from=publish /app/publish .
+ ---> f49e308d560d
+Step 15/16 : EXPOSE 80
+ ---> Running in 60b5f6f36305
+Removing intermediate container 60b5f6f36305
+ ---> 19015bbf027c
+Step 16/16 : ENTRYPOINT ["dotnet", "EmployeManagement.dll"]
+ ---> Running in c1b0c56070f2
+Removing intermediate container c1b0c56070f2
+ ---> a64f6ea809ee
+Successfully built a64f6ea809ee
+Successfully tagged emp_mgmt_image:latest
