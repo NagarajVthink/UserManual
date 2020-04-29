@@ -1,7 +1,7 @@
 # User Manual configuration and Installation 
 About Microsoft Visual Studio
 
-.NET Core 3.1 apps, Visual Studio 2019 version 16.3 or higher.
+.NET Core 3.1 apps, Visual Studio 2019 version 16.3 or higher
 
 ## Documents url
   https://docs.google.com/document/d/1IpbfNJZVrogZONBDOV8-HGbPAQgjq776KaW_nXRYpCM/edit?pli=1 
