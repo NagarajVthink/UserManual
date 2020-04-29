@@ -8,7 +8,7 @@ About Microsoft Visual Studio
 ## Git URL
   https://github.com/NagarajVthink/UserManual  
 ## Installed packages
-1. UserManagement installed packages <br />
+1. UserManagement <br />
    1.	Serilog.AspNetCore 3.2.0 
    2.	Serilog.Settings.Configuration 3.1.0
    3.	Serilog.Sinks.RollingFile 3.3.0
@@ -16,7 +16,7 @@ About Microsoft Visual Studio
    5.	System.Data.DataSetExtensions 4.5.0
    6.	System.Data.SqlClient 4.8.1
 	 
-2. EmployeManagement installed packages <br />
+2. EmployeManagement <br />
    1.	Serilog.AspNetCore 3.2.0
    2.	Serilog.Settings.Configuration 3.1.0
    3.	Serilog.Sinks.RollingFile 3.3.0
